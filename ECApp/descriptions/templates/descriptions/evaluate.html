@@ -1,0 +1,120 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <title>Activity Evaluation</title>
+  <style>
+    body {
+      font-family: Arial, sans-serif;
+      background-color: #f9f9f9;
+      max-width: 800px;
+      margin: 40px auto;
+      padding: 30px;
+      background: white;
+      border-radius: 10px;
+      box-shadow: 0 0 10px rgba(0,0,0,0.1);
+    }
+
+    h1 {
+      text-align: center;
+      color: #4a90e2;
+    }
+
+    textarea, input[type="file"] {
+      width: 100%;
+      padding: 10px;
+      font-size: 1rem;
+      margin-top: 10px;
+      border-radius: 6px;
+      border: 1px solid #ccc;
+    }
+
+    textarea {
+      resize: vertical;
+      min-height: 120px;
+    }
+
+    .preview-wrapper {
+      display: flex;
+      flex-wrap: wrap;
+      gap: 10px;
+      margin-top: 10px;
+    }
+
+    .preview-wrapper img {
+      max-height: 150px;
+      border-radius: 6px;
+      border: 1px solid #ccc;
+    }
+
+    button {
+      padding: 10px 20px;
+      font-size: 1rem;
+      margin-top: 15px;
+      background-color: #4a90e2;
+      color: white;
+      border: none;
+      border-radius: 6px;
+      cursor: pointer;
+    }
+
+    button:hover {
+      background-color: #357ab8;
+    }
+
+    .result {
+      margin-top: 30px;
+      padding: 20px;
+      background-color: #eef6fc;
+      border-left: 4px solid #4a90e2;
+      border-radius: 6px;
+    }
+
+    .error {
+      color: #d9534f;
+      font-weight: bold;
+      margin-top: 20px;
+    }
+  </style>
+</head>
+<body>
+  <h1>Activity Evaluation</h1>
+
+  <form method="post" enctype="multipart/form-data" onsubmit="showSpinner()">
+    {% csrf_token %}
+
+    <label for="observation"><strong>Enter observation:</strong></label>
+    <textarea id="observation" name="observation" placeholder="e.g., The child poured water from one container to another with both hands.">{{ observation }}</textarea>
+
+    <label for="photo"><strong>Upload photo(s) (optional):</strong></label>
+    <input type="file" id="photo" name="photo" accept="image/*" multiple onchange="previewImages(event)">
+    <div class="preview-wrapper" id="preview-container"></div>
+
+    <button type="submit">Evaluate</button>
+  </form>
+
+  {% if evaluation %}
+    <div class="result">
+      <h2>Evaluation</h2>
+      <p>{{ evaluation|linebreaks }}</p>
+    </div>
+  {% elif error %}
+    <p class="error">{{ error }}</p>
+  {% endif %}
+
+  <script>
+    function previewImages(event) {
+      const previewContainer = document.getElementById('preview-container');
+      previewContainer.innerHTML = '';
+      const files = event.target.files;
+
+      for (let i = 0; i < files.length; i++) {
+        const img = document.createElement('img');
+        img.src = URL.createObjectURL(files[i]);
+        img.onload = () => URL.revokeObjectURL(img.src);
+        previewContainer.appendChild(img);
+      }
+    }
+  </script>
+</body>
+</html>
