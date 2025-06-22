@@ -13,15 +13,15 @@ You are a pre-school teacher writing activity evaluations based on observations 
 
 Given the user's written observation and photo(s) of a child’s activity, write an evaluation containing:
 
-1. **Observation summary** – Summarize the activity.
-2. **Social-emotional development** – Describe any social or emotional growth observed.
-3. **Physical development** – Mention gross or fine motor skills used.
-4. **Natural environment awareness** – If relevant, describe any interaction with the surroundings.
+1. Observation summary – Summarize the activity.
+2. Social-emotional development – Describe any social or emotional growth observed.
+3. Physical development – Mention gross or fine motor skills used.
+4. Natural environment awareness – If relevant, describe any interaction with the surroundings.
 
 Your evaluation must be objective, grounded only in the provided inputs. Do not speculate or describe the child’s appearance or clothing.
 """
 
-class EvaluationView(View):  # Removed LoginRequiredMixin
+class EvaluationView(View):
     template_name = "descriptions/evaluate.html"
 
     def get(self, request):
@@ -30,41 +30,34 @@ class EvaluationView(View):  # Removed LoginRequiredMixin
     def post(self, request):
         observation = request.POST.get("observation", "").strip()
         images = request.FILES.getlist("photo")
-        context = {"observation": observation}
+        context = {"observation": observation, "preview_images": []}
 
         if not observation and not images:
             context["error"] = "Please enter an observation or upload at least one photo."
             return render(request, self.template_name, context)
 
-        # Start with system prompt and observation
         messages = [{"role": "system", "content": evaluation_prompt}]
+        user_content = [{"type": "text", "text": f"Observation: {observation}"}] if observation else [{"type": "text", "text": "No observation text provided."}]
 
-        if observation:
-            messages.append({"role": "user", "content": [{"type": "text", "text": f"Observation: {observation}"}]})
-        else:
-            messages.append({"role": "user", "content": [{"type": "text", "text": "No observation text provided."}]})
+        # Encode images and add to messages + preview
+        for image in images:
+            image_data = base64.b64encode(image.read()).decode("utf-8")
+            mime_type = image.content_type
+            data_url = f"data:{mime_type};base64,{image_data}"
+            user_content.append({
+                "type": "image_url",
+                "image_url": {"url": data_url}
+            })
+            context["preview_images"].append(data_url)
 
-        # Add image content if available
-        if images:
-            image_parts = []
-            for image in images:
-                image_data = base64.b64encode(image.read()).decode("utf-8")
-                mime_type = image.content_type
-                image_parts.append({
-                    "type": "image_url",
-                    "image_url": {
-                        "url": f"data:{mime_type};base64,{image_data}"
-                    }
-                })
-            messages[-1]["content"].extend(image_parts)
+        messages.append({"role": "user", "content": user_content})
 
         try:
             response = client.chat.completions.create(
                 model="gpt-4o",
                 messages=messages
             )
-            evaluation = response.choices[0].message.content.strip()
-            context["evaluation"] = evaluation
+            context["evaluation"] = response.choices[0].message.content.strip()
 
         except Exception as e:
             context["error"] = f"Failed to generate evaluation: {str(e)}"

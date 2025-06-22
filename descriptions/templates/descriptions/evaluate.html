@@ -2,72 +2,99 @@
 <html lang="en">
 <head>
   <meta charset="UTF-8" />
-  <title>Activity Evaluation</title>
+  <title>Preschool Activity Evaluation</title>
   <style>
     body {
-      font-family: Arial, sans-serif;
-      background-color: #f9f9f9;
+      font-family: "Segoe UI", Roboto, sans-serif;
+      background-color: #f0f2f5;
+      margin: 0;
+      padding: 40px 20px;
+      display: flex;
+      justify-content: center;
+    }
+
+    .container {
+      background-color: #ffffff;
+      width: 100%;
       max-width: 800px;
-      margin: 40px auto;
-      padding: 30px;
-      background: white;
-      border-radius: 10px;
-      box-shadow: 0 0 10px rgba(0,0,0,0.1);
+      padding: 40px;
+      border-radius: 12px;
+      box-shadow: 0 6px 20px rgba(0, 0, 0, 0.1);
     }
 
     h1 {
       text-align: center;
-      color: #4a90e2;
+      color: #2b7bd9;
+      margin-bottom: 30px;
+    }
+
+    label {
+      font-weight: 600;
+      display: block;
+      margin-top: 20px;
     }
 
     textarea, input[type="file"] {
       width: 100%;
-      padding: 10px;
+      padding: 12px;
       font-size: 1rem;
-      margin-top: 10px;
-      border-radius: 6px;
+      border-radius: 8px;
       border: 1px solid #ccc;
+      margin-top: 8px;
+      background-color: #fafafa;
     }
 
     textarea {
+      min-height: 140px;
       resize: vertical;
-      min-height: 120px;
     }
 
     .preview-wrapper {
       display: flex;
       flex-wrap: wrap;
-      gap: 10px;
-      margin-top: 10px;
+      gap: 12px;
+      margin-top: 12px;
     }
 
     .preview-wrapper img {
-      max-height: 150px;
+      max-height: 140px;
       border-radius: 6px;
       border: 1px solid #ccc;
     }
 
-    button {
-      padding: 10px 20px;
+    .btn {
+      display: inline-block;
+      padding: 12px 24px;
       font-size: 1rem;
-      margin-top: 15px;
-      background-color: #4a90e2;
+      font-weight: 600;
       color: white;
+      background-color: #2b7bd9;
       border: none;
-      border-radius: 6px;
+      border-radius: 8px;
+      margin-top: 30px;
       cursor: pointer;
+      transition: background-color 0.2s ease;
     }
 
-    button:hover {
-      background-color: #357ab8;
+    .btn:hover {
+      background-color: #1e5ea8;
+    }
+
+    .btn-secondary {
+      background-color: #6c757d;
+    }
+
+    .btn-secondary:hover {
+      background-color: #565e64;
     }
 
     .result {
-      margin-top: 30px;
+      margin-top: 40px;
       padding: 20px;
-      background-color: #eef6fc;
-      border-left: 4px solid #4a90e2;
-      border-radius: 6px;
+      background-color: #e9f3fd;
+      border-left: 5px solid #2b7bd9;
+      border-radius: 8px;
+      white-space: pre-line;
     }
 
     .error {
@@ -78,29 +105,43 @@
   </style>
 </head>
 <body>
-  <h1>Activity Evaluation</h1>
+  <div class="container">
+    <h1>Preschool Activity Evaluation</h1>
 
-  <form method="post" enctype="multipart/form-data" onsubmit="showSpinner()">
-    {% csrf_token %}
+    <form method="post" enctype="multipart/form-data" onsubmit="showSpinner()">
+      {% csrf_token %}
 
-    <label for="observation"><strong>Enter observation:</strong></label>
-    <textarea id="observation" name="observation" placeholder="e.g., The child poured water from one container to another with both hands.">{{ observation }}</textarea>
+      <label for="observation">Observation</label>
+      <textarea id="observation" name="observation" placeholder="e.g., The child poured water from one container to another with both hands.">{{ observation }}</textarea>
 
-    <label for="photo"><strong>Upload photo(s) (optional):</strong></label>
-    <input type="file" id="photo" name="photo" accept="image/*" multiple onchange="previewImages(event)">
-    <div class="preview-wrapper" id="preview-container"></div>
+      <label for="photo">Upload Photo(s) (optional)</label>
+      <input type="file" id="photo" name="photo" accept="image/*" multiple onchange="previewImages(event)">
+      <div class="preview-wrapper" id="preview-container">
+        {% if image_urls %}
+          {% for img in image_urls %}
+            <img src="{{ img }}" alt="Uploaded image">
+          {% endfor %}
+        {% endif %}
+      </div>
 
-    <button type="submit">Evaluate</button>
-  </form>
+      <button type="submit" class="btn">Evaluate</button>
+    </form>
 
-  {% if evaluation %}
-    <div class="result">
-      <h2>Evaluation</h2>
-      <p>{{ evaluation|linebreaks }}</p>
-    </div>
-  {% elif error %}
-    <p class="error">{{ error }}</p>
-  {% endif %}
+    {% if evaluation %}
+      <div class="result">
+        <h2>Evaluation</h2>
+        <p>{{ evaluation|linebreaks }}</p>
+      </div>
+    {% elif error %}
+      <p class="error">{{ error }}</p>
+    {% endif %}
+
+    {% if evaluation or error %}
+      <form method="get">
+        <button type="submit" class="btn btn-secondary">Start New Analysis</button>
+      </form>
+    {% endif %}
+  </div>
 
   <script>
     function previewImages(event) {
