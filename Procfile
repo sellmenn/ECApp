@@ -1,1 +1,1 @@
-web: python ECApp/manage.py runserver 0.0.0.0:$PORT
+web: gunicorn ECApp.ECApp.wsgi
