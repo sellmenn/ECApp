@@ -1,6 +1,5 @@
 from django.shortcuts import render
 from django.views import View
-from django.contrib.auth.mixins import LoginRequiredMixin
 from openai import OpenAI
 from dotenv import load_dotenv
 import base64
@@ -22,9 +21,8 @@ Given the user's written observation and photo(s) of a child’s activity, write
 Your evaluation must be objective, grounded only in the provided inputs. Do not speculate or describe the child’s appearance or clothing.
 """
 
-class EvaluationView(LoginRequiredMixin, View):
+class EvaluationView(View):  # Removed LoginRequiredMixin
     template_name = "descriptions/evaluate.html"
-    login_url = "login"
 
     def get(self, request):
         return render(request, self.template_name)
