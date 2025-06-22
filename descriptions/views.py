@@ -16,10 +16,11 @@ Base your evaluation on Singapore Early Years Development Framework.
 1. Observation summary – Summarize the activity.
 2. Social-emotional development – Describe any social or emotional growth observed.
 3. Physical development – Mention gross or fine motor skills used.
-4. Natural environment awareness – If relevant, describe any interaction with the surroundings.
+4. Environment awareness – If relevant, describe any interaction with objects and surroundings.
 
 Your evaluation must be objective, grounded only in the provided inputs. Do not speculate or describe the child’s appearance or clothing.
-Output a single cohesive paragraph.
+Reflect on your output. Are there more ways to link observations and details in the image to the child's development? Ca you expand on your response with greater depth?
+Output an expansive cohesive paragraph.
 """
 
 class EvaluationView(View):
