@@ -10,8 +10,8 @@ client = OpenAI(api_key=os.getenv("OPENAI_API_KEY"))
 
 evaluation_prompt = """
 You are a pre-school teacher writing activity evaluations based on observations and photos of children.
-
 Given the user's written observation and photo(s) of a child’s activity, write an evaluation containing:
+Base your evaluation on Singapore Early Years Development Framework.
 
 1. Observation summary – Summarize the activity.
 2. Social-emotional development – Describe any social or emotional growth observed.
@@ -19,6 +19,7 @@ Given the user's written observation and photo(s) of a child’s activity, write
 4. Natural environment awareness – If relevant, describe any interaction with the surroundings.
 
 Your evaluation must be objective, grounded only in the provided inputs. Do not speculate or describe the child’s appearance or clothing.
+Output a single cohesive paragraph.
 """
 
 class EvaluationView(View):
