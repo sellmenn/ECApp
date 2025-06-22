@@ -1,1 +1,1 @@
-web: gunicorn ECApp.ECApp.wsgi
+web: gunicorn ECApp.wsgi
