@@ -26,7 +26,7 @@ SECRET_KEY = "django-insecure-8(*9+(lcl-cghdp(@f+o8keri*_njntk!6^ia)45$o=aq((@j4
 # SECURITY WARNING: don't run with debug turned on in production!
 DEBUG = True
 
-ALLOWED_HOSTS = []
+ALLOWED_HOSTS = os.environ.get("ALLOWED_HOSTS", "").split(",") if os.environ.get("ALLOWED_HOSTS") else ["*"]
 
 
 # Application definition
@@ -117,11 +117,14 @@ USE_TZ = True
 # https://docs.djangoproject.com/en/5.2/howto/static-files/
 
 STATIC_URL = "static/"
+STATIC_ROOT = BASE_DIR / "staticfiles"
 
 # Default primary key field type
 # https://docs.djangoproject.com/en/5.2/ref/settings/#default-auto-field
 
 DEFAULT_AUTO_FIELD = "django.db.models.BigAutoField"
+LOGIN_URL = "login"
+LOGIN_REDIRECT_URL = "/"
 
 # OpenAI API key configuration
 OPENAI_API_KEY = os.environ.get("OPENAI_API_KEY", "")
