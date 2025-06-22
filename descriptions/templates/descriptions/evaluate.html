@@ -2,78 +2,92 @@
 <html lang="en">
 <head>
   <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
   <title>Preschool Activity Evaluation</title>
   <style>
+    :root {
+      --primary-color: #2b7bd9;
+      --background: #f0f2f5;
+      --text-color: #333;
+      --error-color: #d9534f;
+      --secondary-color: #6c757d;
+    }
+
+    * {
+      box-sizing: border-box;
+    }
+
     body {
       font-family: "Segoe UI", Roboto, sans-serif;
-      background-color: #f0f2f5;
+      background-color: var(--background);
       margin: 0;
-      padding: 40px 20px;
-      display: flex;
-      justify-content: center;
+      padding: 20px;
+      color: var(--text-color);
     }
 
     .container {
-      background-color: #ffffff;
-      width: 100%;
+      background-color: #fff;
       max-width: 800px;
-      padding: 40px;
+      width: 100%;
+      margin: 0 auto;
+      padding: 30px;
       border-radius: 12px;
-      box-shadow: 0 6px 20px rgba(0, 0, 0, 0.1);
+      box-shadow: 0 4px 20px rgba(0, 0, 0, 0.08);
     }
 
     h1 {
       text-align: center;
-      color: #2b7bd9;
-      margin-bottom: 30px;
+      color: var(--primary-color);
+      font-size: 1.8rem;
+      margin-bottom: 24px;
     }
 
     label {
       font-weight: 600;
-      display: block;
       margin-top: 20px;
+      display: block;
     }
 
-    textarea, input[type="file"] {
+    textarea,
+    input[type="file"] {
       width: 100%;
       padding: 12px;
+      margin-top: 8px;
       font-size: 1rem;
       border-radius: 8px;
       border: 1px solid #ccc;
-      margin-top: 8px;
       background-color: #fafafa;
     }
 
     textarea {
-      min-height: 140px;
       resize: vertical;
+      min-height: 120px;
     }
 
     .preview-wrapper {
       display: flex;
       flex-wrap: wrap;
-      gap: 12px;
+      gap: 10px;
       margin-top: 12px;
     }
 
     .preview-wrapper img {
-      max-height: 140px;
+      max-height: 120px;
       border-radius: 6px;
       border: 1px solid #ccc;
     }
 
     .btn {
-      display: inline-block;
       padding: 12px 24px;
       font-size: 1rem;
       font-weight: 600;
       color: white;
-      background-color: #2b7bd9;
+      background-color: var(--primary-color);
       border: none;
       border-radius: 8px;
-      margin-top: 30px;
       cursor: pointer;
-      transition: background-color 0.2s ease;
+      margin-top: 24px;
+      display: inline-block;
     }
 
     .btn:hover {
@@ -81,7 +95,8 @@
     }
 
     .btn-secondary {
-      background-color: #6c757d;
+      background-color: var(--secondary-color);
+      margin-left: 10px;
     }
 
     .btn-secondary:hover {
@@ -89,18 +104,40 @@
     }
 
     .result {
-      margin-top: 40px;
+      margin-top: 32px;
       padding: 20px;
       background-color: #e9f3fd;
-      border-left: 5px solid #2b7bd9;
+      border-left: 5px solid var(--primary-color);
       border-radius: 8px;
       white-space: pre-line;
     }
 
     .error {
-      color: #d9534f;
+      color: var(--error-color);
       font-weight: bold;
       margin-top: 20px;
+    }
+
+    @media (max-width: 600px) {
+      .container {
+        padding: 20px;
+      }
+
+      h1 {
+        font-size: 1.5rem;
+      }
+
+      .preview-wrapper img {
+        max-height: 100px;
+        width: 100%;
+        object-fit: cover;
+      }
+
+      .btn, .btn-secondary {
+        width: 100%;
+        margin-top: 12px;
+        margin-left: 0;
+      }
     }
   </style>
 </head>
@@ -108,11 +145,11 @@
   <div class="container">
     <h1>Preschool Activity Evaluation</h1>
 
-    <form method="post" enctype="multipart/form-data" onsubmit="showSpinner()">
+    <form method="post" enctype="multipart/form-data">
       {% csrf_token %}
 
       <label for="observation">Observation</label>
-      <textarea id="observation" name="observation" placeholder="e.g., The child poured water from one container to another with both hands.">{{ observation }}</textarea>
+      <textarea id="observation" name="observation" placeholder="e.g., The child poured water from one container to another.">{{ observation }}</textarea>
 
       <label for="photo">Upload Photo(s) (optional)</label>
       <input type="file" id="photo" name="photo" accept="image/*" multiple onchange="previewImages(event)">
